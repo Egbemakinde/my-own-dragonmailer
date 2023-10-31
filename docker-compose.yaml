@@ -1,0 +1,59 @@
+version: "3"
+services:
+  frontend:
+    image: egbemakinde/dragonmailer:1
+    build:
+      context: .
+      dockerfile: ./dockerfile
+    restart: always
+    ports:
+      - "2021-2023:3400"
+    networks: 
+      - mynetwork
+    container_name:
+      mycontainer1
+    volumes:
+      - myvolume:/app/store
+    depends_on:
+      - mongo
+    
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    networks: 
+      - mynetwork
+    container_name:
+      mycontainer2
+    volumes:
+      - mongodb_data:/data/db
+    
+
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    networks: 
+      - mynetwork
+    container_name: 
+      mycontainer3
+    volumes:
+      - mongo-expresso:/express/storage
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+      ME_CONFIG_MONGODB_URL: mongodb://root:password@mongo:27017/
+networks: 
+  mynetwork:
+    driver: bridge
+volumes:
+  myvolume:
+  mongodb_data:
+  mongo-expresso:
+    driver: local
+
+    
